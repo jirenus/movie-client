@@ -1,5 +1,5 @@
 import './App.css';
-import api from './api/axiosConfig';
+import MovieService from './services/MovieService';
 import { useEffect, useState } from 'react';
 import Layout from './components/Layout';
 import { Route, Routes } from 'react-router-dom';
@@ -14,21 +14,24 @@ function App() {
   const [movie, setMovie] = useState();
   const [reviews, setReviews] = useState();
 
-  const getMovies = async () => {
+  const getAllMovies = async () => {
     try {
-      const res = await api.get('/api/v1/movies');
-      console.log(res.data.data);
+      const res = await MovieService.getAllMovies();
+      console.log("Get all movies");
+      console.log(res);
       
       setMovies(res.data.data);
     } catch (error) {
+      console.log("Get all movies");
       console.log(error);
     }
   }
 
-  const getMovieData = async (movieId) => {
+  const getSingleMovie = async (movieId) => {
     try {
-      const res = await api.get(`/api/v1/movies/${movieId}`);
-      console.log(res.data.data);
+      const res = await MovieService.getSingleMovie(movieId);
+      console.log("Get single movie");
+      console.log(res);
 
       const singleMovie = res.data.data;
 
@@ -36,12 +39,13 @@ function App() {
 
       setReviews(singleMovie.reviewIds);
     } catch (error) {
+      console.log("Get single movie");
       console.log(error);
     }
   }
 
   useEffect(() => {
-    getMovies();
+    getAllMovies();
   }, []);
   
 
@@ -52,7 +56,7 @@ function App() {
         <Route path='/' element={<Layout />}>
           <Route path='/' element={<Home movies={movies} />} />
           <Route path='/trailer/:ytTrailerId' element={<Trailer />} />
-          <Route path='/reviews/:movieId' element={<Reviews getMovieData={getMovieData} movie={movie} reviews={reviews} setReviews={setReviews} />} />
+          <Route path='/reviews/:movieId' element={<Reviews getSingleMovie={getSingleMovie} movie={movie} reviews={reviews} setReviews={setReviews} />} />
         </Route>
       </Routes>
     </div>
